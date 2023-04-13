@@ -6,9 +6,9 @@ import { useEffect } from "react";
 function App() {
   const [input, setInput] = useState("");
   const [storageFiles, setStorageFiles] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const handleInputChange = (e) => {
     setInput(e.target.files[0]);
-    console.log(input.name);
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,15 +16,17 @@ function App() {
     formData.append("file", input);
 
     try {
+      setIsLoading(true);
       const response = await axios.put(
         `${import.meta.env.VITE_API_ENDPOINT}/${input.name}`,
-        formData,
+        input,
         {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         }
       );
+      setIsLoading(false);
       console.log(response);
     } catch (error) {
       console.log(error);
@@ -43,7 +45,7 @@ function App() {
   useEffect(() => {
     fetchStorageFiles();
     console.log(storageFiles);
-  }, []);
+  }, [isLoading]);
 
   return (
     <>
@@ -68,14 +70,21 @@ function App() {
         </form>
       </section>
       <section className="container">
-        <center><h2>Nossos arquivos</h2></center>
         <center>
-        {storageFiles.map((e) => (
-          <>
-            <a href={`${import.meta.env.VITE_API_ENDPOINT}/${e.name}`} download={true}>{e.name}</a>
-            <br />
-          </>
-        ))}
+          <h2>Nossos arquivos</h2>
+        </center>
+        <center>
+          {storageFiles.map((e) => (
+            <>
+              <a
+                href={`${import.meta.env.VITE_API_ENDPOINT}/${e.name}`}
+                download={true}
+              >
+                {e.name}
+              </a>
+              <br />
+            </>
+          ))}
         </center>
       </section>
     </>

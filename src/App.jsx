@@ -35,8 +35,9 @@ function App() {
 
   const fetchStorageFiles = async () => {
     try {
-      const response = await axios.get(import.meta.env.VITE_API_ENDPOINT);
+      const response = await axios.get(import.meta.env.VITE_API_ENDPOINT + '/?fields=timeModified');
       setStorageFiles(response.data.objects);
+      console.log(storageFiles);
     } catch (error) {
       console.log(error);
     }
@@ -64,9 +65,10 @@ function App() {
             id="file"
             placeholder="escolha um arquivo"
             onChange={handleInputChange}
+            required
           />
 
-          <button type="submit">Enviar Arquivo</button>
+          <button type="submit" aria-busy={isLoading}>Enviar Arquivo</button>
         </form>
       </section>
       <section className="container">
@@ -74,6 +76,7 @@ function App() {
           <h2>Nossos arquivos</h2>
         </center>
         <center>
+          <div aria-busy={isLoading}></div>
           {storageFiles.map((e) => (
             <>
               <a
